@@ -1,0 +1,16 @@
+{
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "cursorOffset": -1,
+    "embeddedLanguageFormatting": "auto",
+    "endOfLine": "lf",
+    "htmlWhitespaceSensitivity": "css",
+    "overrides": [],
+    "printWidth": 80,
+    "useTabs": false,
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true,
+    "rangeStart": 0
+}
