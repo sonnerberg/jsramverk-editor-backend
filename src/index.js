@@ -1,7 +1,6 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-import { log } from 'console'
 
 const app = express()
 
@@ -16,20 +15,20 @@ if (process.env.NODE_ENV !== 'test') {
 
 const PORT = process.env.PORT || 1337
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.json({ hello: 'world' })
 })
 
 // Add routes for 404 and error handling
 // Catch 404 and forward to error handler
 // Put this last
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
     const err = new Error('Not Found')
     err.status = 404
     next(err)
 })
 
-app.use(({ status, message: title }, req, res, next) => {
+app.use(({ status, message: title }, _req, res, next) => {
     if (res.headersSent) {
         return next(err)
     }
@@ -45,5 +44,5 @@ app.use(({ status, message: title }, req, res, next) => {
 })
 
 app.listen(PORT, () => {
-    log(`server listening on ${PORT}`)
+    console.log(`server listening on ${PORT}`)
 })
