@@ -1,5 +1,5 @@
 {
-    "arrowParens": "avoid",
+    "arrowParens": "always",
     "bracketSpacing": true,
     "cursorOffset": -1,
     "embeddedLanguageFormatting": "auto",
