@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "54122dc4-e888-4284-941d-a1cc92705898",
-		"name": "jsramverk-editor",
+		"_postman_id": "52bf14df-1597-496b-b462-dc6c5368620c",
+		"name": "jsramverk-editor-backend",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -15,7 +15,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"html\": \"1\"\n}",
+					"raw": "{\n    \"html\": \"<h1>Hello World</h1>\",\n    \"name\": \"Document name\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
