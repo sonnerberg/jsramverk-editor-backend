@@ -6,12 +6,15 @@ const { DB_USERNAME, DB_PASSWORD, DB_ADDRESS, DB_NAME, DB_COLLECTION } =
     process.env
 
 // Connection URI
-// const uri = `mongodb://localhost:27017/${DB_NAME}`
+let uri
+uri = `mongodb://localhost:27017/${DB_NAME}`
 
-// Connection URI
-const username = encodeURIComponent(DB_USERNAME)
-const password = encodeURIComponent(DB_PASSWORD)
-const uri = `mongodb+srv://${username}:${password}@${DB_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
+if (process.env.NODE_ENV === 'production') {
+    // Connection URI
+    const username = encodeURIComponent(DB_USERNAME)
+    const password = encodeURIComponent(DB_PASSWORD)
+    uri = `mongodb+srv://${username}:${password}@${DB_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
+}
 
 const database = {
     getAllHTMLDocuments: async () => {
