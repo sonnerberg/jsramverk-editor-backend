@@ -26,10 +26,32 @@
 
 1. Edit the .env file to suit your needs.
 
-1. Start the server:
+    ```bash
+    code .env
+    ```
+
+    or:
+
+    ```bash
+    vim .env
+    ```
+
+    or:
+
+    ```bash
+    nano .env
+    ```
+
+1. Start the server (this will use a local database):
 
     ```bash
     npm start
+    ```
+
+If you want to use [Mongo DB Atlas](https://www.mongodb.com/cloud/atlas), instead run:
+
+    ```bash
+    npm run production
     ```
 
 You can import a [json](https://github.com/sonnerberg/jsramverk-editor-backend/blob/main/jsramverk-editor-backend.postman_collection.json) file into [Postman](https://www.postman.com/) to test all the routes of the api.
