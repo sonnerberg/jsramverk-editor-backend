@@ -48,7 +48,7 @@
     npm start
     ```
 
-If you want to use [Mongo DB Atlas](https://www.mongodb.com/cloud/atlas), instead run:
+    If you want to use [Mongo DB Atlas](https://www.mongodb.com/cloud/atlas), instead run:
 
     ```bash
     npm run production
