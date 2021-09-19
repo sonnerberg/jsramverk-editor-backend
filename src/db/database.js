@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import { MongoClient, ObjectId } from 'mongodb'
 dotenv.config()
 
-const { DB_USERNAME, DB_PASSWORD, DB_ADDRESS, DB_NAME, DB_COLLECTION } =
+const { DB_USERNAME, DB_PASSWORD, DB_CLUSTER_ADDRESS, DB_NAME, DB_COLLECTION } =
     process.env
 
 // Connection URI
@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
     // Connection URI
     const username = encodeURIComponent(DB_USERNAME)
     const password = encodeURIComponent(DB_PASSWORD)
-    uri = `mongodb+srv://${username}:${password}@${DB_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
+    uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
 }
 
 const database = {
@@ -28,9 +28,9 @@ const database = {
             const collection = database.collection(DB_COLLECTION)
             const query = {}
 
-            const cursor = await collection.find(query).toArray()
+            const docs = await collection.find(query).toArray()
 
-            return cursor
+            return docs
         } finally {
             // Ensures that the client will close when you finish/error
             await client.close()
@@ -43,9 +43,6 @@ const database = {
         await client.connect()
 
         try {
-            // Establish and verify connection
-            await client.db(DB_NAME).command({ ping: 1 })
-            console.log('Connected successfully to server')
             const database = client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
             const doc = {
@@ -86,6 +83,8 @@ const database = {
             const query = { _id: ObjectId(id) }
 
             const doc = await collection.findOne(query)
+
+            if (!doc) throw new Error('Document not found')
 
             return doc
         } finally {
