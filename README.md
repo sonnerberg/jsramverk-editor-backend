@@ -32,4 +32,4 @@
     npm start
     ```
 
-You can import a json file into Postman to test all the routes of the api.
+You can import a [json](https://github.com/sonnerberg/jsramverk-editor-backend/blob/main/jsramverk-editor-backend.postman_collection.json) file into [Postman](https://www.postman.com/) to test all the routes of the api.
