@@ -26,22 +26,6 @@
 
 1. Edit the .env file to suit your needs.
 
-    ```bash
-    code .env
-    ```
-
-    or
-
-    ```bash
-    vim .env
-    ```
-
-    or
-
-    ```bash
-    nano .env
-    ```
-
 1. Start the server:
 
     ```bash
@@ -49,5 +33,3 @@
     ```
 
 You can import a json file into Postman to test all the routes of the api.
-
-
