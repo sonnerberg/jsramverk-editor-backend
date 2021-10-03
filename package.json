@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "nodemon ./src/index.js",
-        "production": "NODE_ENV='production' node ./src/index.js",
+        "develop": "nodemon ./src/index.js",
+        "start": "NODE_ENV='production' node ./src/index.js",
         "reinstall": "npx rimraf ./node_modules/ ./package-lock.json && npm install"
     },
     "keywords": [],
