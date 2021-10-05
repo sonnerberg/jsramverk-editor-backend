@@ -62,3 +62,7 @@ The routes are structures in the following way:
 * `PUT /api/v1/update`: Update an existing document using a body containing `_id`, `name`, and `html`.
 * `GET /api/v1/`: Get a list of all documents with their `_id`, `name`, and `html`.
 * `GET /api/v1/:id` : Get a single document where `:id` is a valid document `_id`.
+
+The backend is deployed here: [Azure](https://jsramverk-editor-pene14.azurewebsites.net/)
+
+The frontend is deployed here: [Bleking Tekniska Högskola](http://www.student.bth.se/~pene14/editor/)
