@@ -5,6 +5,7 @@ import apiRouter from './routes/api.js'
 import handle404 from './handle404.js'
 import errorHandler from './errorHandler.js'
 import path from 'path'
+
 const __dirname = path.resolve()
 const rootRouter = express.Router()
 
@@ -36,6 +37,6 @@ app.use(rootRouter)
 app.use(handle404)
 app.use(errorHandler)
 
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
     console.log(`server listening on ${PORT}`)
 })

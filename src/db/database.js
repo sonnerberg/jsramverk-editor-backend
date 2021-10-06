@@ -2,8 +2,14 @@ import dotenv from 'dotenv'
 import { MongoClient, ObjectId } from 'mongodb'
 dotenv.config()
 
-const { DB_USERNAME, DB_PASSWORD, DB_CLUSTER_ADDRESS, DB_NAME, DB_COLLECTION } =
-    process.env
+const {
+    DB_USERNAME,
+    DB_PASSWORD,
+    DB_CLUSTER_ADDRESS,
+    DB_NAME,
+    DB_COLLECTION,
+    DB_NAME_TEST,
+} = process.env
 
 // Connection URI
 let uri
@@ -14,6 +20,10 @@ if (process.env.NODE_ENV === 'production') {
     const username = encodeURIComponent(DB_USERNAME)
     const password = encodeURIComponent(DB_PASSWORD)
     uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
+}
+
+if (process.env.NODE_ENV === 'test') {
+    uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
 }
 
 const database = {
