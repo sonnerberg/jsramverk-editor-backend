@@ -6,7 +6,8 @@
     "scripts": {
         "develop": "nodemon ./src/index.js",
         "start": "NODE_ENV='production' node ./src/index.js",
-        "reinstall": "npx rimraf ./node_modules/ ./package-lock.json && npm install"
+        "reinstall": "npx rimraf ./node_modules/ ./package-lock.json && npm install",
+        "test": "nyc --reporter=html --reporter=text --reporter=clover mocha --timeout 10000"
     },
     "keywords": [],
     "author": "",
@@ -22,7 +23,8 @@
         "chai": "^4.3.4",
         "chai-http": "^4.3.0",
         "mocha": "^9.1.2",
-        "nodemon": "^2.0.12"
+        "nodemon": "^2.0.12",
+        "nyc": "^15.1.0"
     },
     "type": "module"
 }
