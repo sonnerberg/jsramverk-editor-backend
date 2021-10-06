@@ -34,7 +34,10 @@ const database = {
         await client.connect()
 
         try {
-            const database = client.db(DB_NAME)
+            const database =
+                process.env.NODE_ENV === 'test'
+                    ? client.db(DB_NAME_TEST)
+                    : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
             const query = {}
 
@@ -53,7 +56,10 @@ const database = {
         await client.connect()
 
         try {
-            const database = client.db(DB_NAME)
+            const database =
+                process.env.NODE_ENV === 'test'
+                    ? client.db(DB_NAME_TEST)
+                    : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
             const doc = {
                 name,
@@ -88,7 +94,10 @@ const database = {
         await client.connect()
 
         try {
-            const database = client.db(DB_NAME)
+            const database =
+                process.env.NODE_ENV === 'test'
+                    ? client.db(DB_NAME_TEST)
+                    : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
             const query = { _id: ObjectId(id) }
 
@@ -109,8 +118,10 @@ const database = {
         await client.connect()
 
         try {
-            console.log('html', id)
-            const database = client.db(DB_NAME)
+            const database =
+                process.env.NODE_ENV === 'test'
+                    ? client.db(DB_NAME_TEST)
+                    : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
             const query = { _id: ObjectId(id) }
             const update = {
