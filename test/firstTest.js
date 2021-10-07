@@ -7,7 +7,6 @@ chai.should()
 chai.use(chaiHttp)
 
 describe('Documents', () => {
-    let newDocumentId
     describe('Should get all documents', () => {
         it('All document returned', (done) => {
             chai.request(server)
@@ -23,6 +22,7 @@ describe('Documents', () => {
     })
 
     describe('Should create a new document and then update it', () => {
+        let newDocumentId
         it('Document created', (done) => {
             chai.request(server)
                 .post('/api/v1/create')
