@@ -23,11 +23,11 @@ if (NODE_ENV === 'production') {
     password = encodeURIComponent(DB_PASSWORD)
     uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
 } else if (NODE_ENV === 'test') {
-    uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
+    // uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
     // Connection URI
-    // username = encodeURIComponent(DB_USERNAME)
-    // password = encodeURIComponent(DB_PASSWORD)
-    // uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME_TEST}?retryWrites=true&w=majority`
+    username = encodeURIComponent(DB_USERNAME)
+    password = encodeURIComponent(DB_PASSWORD)
+    uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME_TEST}?retryWrites=true&w=majority`
 } else {
     uri = `mongodb://localhost:27017/${DB_NAME}`
 }
