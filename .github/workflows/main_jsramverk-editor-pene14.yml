@@ -17,8 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        TEST_ENVIRONMENT: ${{ secrets.TEST_ENVIRONMENT }}
 
     - name: Set up Node.js version
       uses: actions/setup-node@v1
@@ -30,6 +28,8 @@ jobs:
         npm install
         npm run build --if-present
         npm run test --if-present
+      env:
+        TEST_ENVIRONMENT: ${{ secrets.TEST_ENVIRONMENT }}
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
