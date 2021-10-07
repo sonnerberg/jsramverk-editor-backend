@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/sonnerberg/jsramverk-editor-backend/branch/main/graph/badge.svg?token=3YMN75CMA0)](https://codecov.io/gh/sonnerberg/jsramverk-editor-backend)
 
+[![Build Status](https://app.travis-ci.com/sonnerberg/jsramverk-editor-backend.svg?branch=main)](https://app.travis-ci.com/sonnerberg/jsramverk-editor-backend)
 
 1. To use the backend, start by cloning the code to your local computer:
 
