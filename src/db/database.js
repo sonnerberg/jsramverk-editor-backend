@@ -16,11 +16,6 @@ let uri
 let username
 let password
 
-console.log(
-    'Github actions should be able to read this:',
-    process.env.TEST_ENVIRONMENT
-)
-
 if (process.env.NODE_ENV === 'production') {
     // Connection URI
     username = encodeURIComponent(DB_USERNAME)
