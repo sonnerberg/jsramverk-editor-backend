@@ -21,7 +21,7 @@ describe('Documents', () => {
         })
     })
 
-    describe('Should create a new document ,update it and retrive it', () => {
+    describe('Should create a new document, update it and retrive it', () => {
         let newDocumentId
         const html = '<h1>hello</h1>'
         const name = 'Another test document'
