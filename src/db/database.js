@@ -23,11 +23,11 @@ if (NODE_ENV === 'production') {
     password = encodeURIComponent(DB_PASSWORD)
     uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
 } else if (NODE_ENV === 'test') {
-    // uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
+    uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
     // Connection URI
-    username = encodeURIComponent(DB_USERNAME)
-    password = encodeURIComponent(DB_PASSWORD)
-    uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME_TEST}?retryWrites=true&w=majority`
+    // username = encodeURIComponent(DB_USERNAME)
+    // password = encodeURIComponent(DB_PASSWORD)
+    // uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME_TEST}?retryWrites=true&w=majority`
 } else {
     uri = `mongodb://localhost:27017/${DB_NAME}`
 }
@@ -73,21 +73,6 @@ const database = {
             }
             const { insertedId: id } = await collection.insertOne(doc)
             return { message: `Successfully inserted document`, id }
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close()
-        }
-    },
-    testConnection: async () => {
-        // Create a new MongoClient
-        const client = new MongoClient(uri)
-        // Connect the client to the server
-        await client.connect()
-
-        try {
-            // Establish and verify connection
-            await client.db(DB_NAME).command({ ping: 1 })
-            return 'Connected successfully to server'
         } finally {
             // Ensures that the client will close when you finish/error
             await client.close()

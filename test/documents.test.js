@@ -21,8 +21,10 @@ describe('Documents', () => {
         })
     })
 
-    describe('Should create a new document and then update it', () => {
+    describe('Should create a new document ,update it and retrive it', () => {
         let newDocumentId
+        const html = '<h1>hello</h1>'
+        const name = 'Another test document'
         it('Document created', (done) => {
             chai.request(server)
                 .post('/api/v1/create')
@@ -42,11 +44,23 @@ describe('Documents', () => {
                 .set('content-type', 'application/json')
                 .send({
                     id: newDocumentId,
-                    html: '<h1>hello</h1>',
-                    name: 'Another test document',
+                    html,
+                    name,
                 })
                 .end((err, res) => {
                     res.should.have.status(200)
+
+                    done()
+                })
+        })
+        it('Document retrieved', (done) => {
+            chai.request(server)
+                .get(`/api/v1/${newDocumentId}`)
+                .end((err, res) => {
+                    res.should.have.status(200)
+                    res.body.data._id.should.equal(newDocumentId)
+                    res.body.data.html.should.equal(html)
+                    res.body.data.name.should.equal(name)
 
                     done()
                 })
@@ -70,6 +84,7 @@ describe('Documents', () => {
                 })
         })
     })
+
     describe('Should fail to create a new document', () => {
         it('Failed to create new document', (done) => {
             chai.request(server)
@@ -78,6 +93,31 @@ describe('Documents', () => {
                 .send({ asdf: 'asdf' })
                 .end((err, res) => {
                     res.should.have.status(500)
+
+                    done()
+                })
+        })
+    })
+
+    describe('Should fail to retrieve non existent document', () => {
+        it('Failed to retrieve non existent document', (done) => {
+            chai.request(server)
+                .get(`/api/v1/615asdf018e77139c724b213`)
+                .end((err, res) => {
+                    res.should.have.status(500)
+
+                    done()
+                })
+        })
+    })
+
+    describe('Should serve HTML when not hitting api', () => {
+        it('HTML served', (done) => {
+            chai.request(server)
+                .get('/asdf')
+                .end((err, res) => {
+                    res.should.have.status(200)
+                    res.text.should.include('<!doctype html>')
 
                     done()
                 })

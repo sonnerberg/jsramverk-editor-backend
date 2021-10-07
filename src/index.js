@@ -2,8 +2,8 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import apiRouter from './routes/api.js'
-import handle404 from './handle404.js'
-import errorHandler from './errorHandler.js'
+// import handle404 from './handle404.js'
+// import errorHandler from './errorHandler.js'
 import path from 'path'
 
 const __dirname = path.resolve()
@@ -34,8 +34,8 @@ rootRouter.get('(/*)?', async (_req, res, _next) => {
 
 app.use(rootRouter)
 
-app.use(handle404)
-app.use(errorHandler)
+// app.use(handle404)
+// app.use(errorHandler)
 
 export const server = app.listen(PORT, () => {
     console.log(`server listening on ${PORT}`)
