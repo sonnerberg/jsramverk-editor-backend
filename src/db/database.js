@@ -9,6 +9,7 @@ const {
     DB_NAME,
     DB_COLLECTION,
     DB_NAME_TEST,
+    NODE_ENV,
 } = process.env
 
 // Connection URI
@@ -16,12 +17,12 @@ let uri
 let username
 let password
 
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
     // Connection URI
     username = encodeURIComponent(DB_USERNAME)
     password = encodeURIComponent(DB_PASSWORD)
     uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
-} else if (process.env.NODE_ENV === 'test') {
+} else if (NODE_ENV === 'test') {
     // uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
     // Connection URI
     username = encodeURIComponent(DB_USERNAME)
@@ -40,7 +41,7 @@ const database = {
 
         try {
             const database =
-                process.env.NODE_ENV === 'test'
+                NODE_ENV === 'test'
                     ? client.db(DB_NAME_TEST)
                     : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
@@ -62,7 +63,7 @@ const database = {
 
         try {
             const database =
-                process.env.NODE_ENV === 'test'
+                NODE_ENV === 'test'
                     ? client.db(DB_NAME_TEST)
                     : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
@@ -100,7 +101,7 @@ const database = {
 
         try {
             const database =
-                process.env.NODE_ENV === 'test'
+                NODE_ENV === 'test'
                     ? client.db(DB_NAME_TEST)
                     : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
@@ -124,7 +125,7 @@ const database = {
 
         try {
             const database =
-                process.env.NODE_ENV === 'test'
+                NODE_ENV === 'test'
                     ? client.db(DB_NAME_TEST)
                     : client.db(DB_NAME)
             const collection = database.collection(DB_COLLECTION)
