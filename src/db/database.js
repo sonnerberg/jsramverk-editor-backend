@@ -13,17 +13,22 @@ const {
 
 // Connection URI
 let uri
-uri = `mongodb://localhost:27017/${DB_NAME}`
+let username
+let password
 
 if (process.env.NODE_ENV === 'production') {
     // Connection URI
-    const username = encodeURIComponent(DB_USERNAME)
-    const password = encodeURIComponent(DB_PASSWORD)
+    username = encodeURIComponent(DB_USERNAME)
+    password = encodeURIComponent(DB_PASSWORD)
     uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME}?retryWrites=true&w=majority`
-}
-
-if (process.env.NODE_ENV === 'test') {
-    uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
+} else if (process.env.NODE_ENV === 'test') {
+    // uri = `mongodb://localhost:27017/${DB_NAME_TEST}`
+    // Connection URI
+    username = encodeURIComponent(DB_USERNAME)
+    password = encodeURIComponent(DB_PASSWORD)
+    uri = `mongodb+srv://${username}:${password}@${DB_CLUSTER_ADDRESS}/${DB_NAME_TEST}?retryWrites=true&w=majority`
+} else {
+    uri = `mongodb://localhost:27017/${DB_NAME}`
 }
 
 const database = {
