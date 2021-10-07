@@ -29,7 +29,12 @@ jobs:
         npm run build --if-present
         npm run test --if-present
       env:
-        TEST_ENVIRONMENT: ${{ secrets.TEST_ENVIRONMENT }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_CLUSTER_ADDRESS: ${{ secrets.DB_CLUSTER_ADDRESS }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_COLLECTION: ${{ secrets.DB_COLLECTION }}
+        DB_NAME_TEST: ${{ secrets.DB_NAME_TEST }}
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
