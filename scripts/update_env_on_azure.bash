@@ -6,7 +6,7 @@ lftp -u \
   "$(pass "$PASS_USERNAME_LOCATION")","$(pass "$PASS_PASSWORD_LOCATION")" \
   "$(pass "$PASS_URL_LOCATION")" << EOF
 
-put .env
+put ../.env
 
 bye
 EOF
