@@ -4,6 +4,8 @@
 
 [![Build Status](https://app.travis-ci.com/sonnerberg/jsramverk-editor-backend.svg?branch=main)](https://app.travis-ci.com/sonnerberg/jsramverk-editor-backend)
 
+[![Coverage Status](https://coveralls.io/repos/github/sonnerberg/jsramverk-editor-backend/badge.svg?branch=main)](https://coveralls.io/github/sonnerberg/jsramverk-editor-backend?branch=main)
+
 1. To use the backend, start by cloning the code to your local computer:
 
     ```bash
