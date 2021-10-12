@@ -17,4 +17,4 @@ script:
 
 after_success:
     - npm run report-coveralls
-    - npm run report-codecov
+    # - npm run report-codecov
