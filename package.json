@@ -7,10 +7,10 @@
         "develop": "nodemon ./src/index.js",
         "start": "NODE_ENV='production' node ./src/index.js",
         "reinstall": "npx rimraf ./node_modules/ ./package-lock.json && npm install",
-        "test": "npm run recreate:testDatabase && cross-env NODE_ENV='test' c8 --reporter=html --reporter=text --reporter=clover mocha 'test/**/*.js' --timeout 10000 && npm run coveralls",
+        "test": "npm run recreate:testDatabase && cross-env NODE_ENV='test' c8 --reporter=html --reporter=text --reporter=clover mocha 'test/**/*.js' --timeout 10000",
         "recreate:testDatabase": "NODE_ENV='test' node ./scripts/resetDb.js",
         "recreate:productionDatabase": "NODE_ENV='production' node ./scripts/resetDb.js",
-        "coveralls": "c8 report --reporter=text-lcov | coveralls"
+        "report-coveralls": "c8 report --reporter=text-lcov | coveralls"
     },
     "keywords": [],
     "author": "",
