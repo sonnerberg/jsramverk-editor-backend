@@ -10,17 +10,20 @@
         "test": "cross-env NODE_ENV='test' c8 --reporter=html --reporter=text --reporter=clover mocha 'test/**/*.js' --timeout 10000 && npm run recreate:testDatabase",
         "recreate:testDatabase": "NODE_ENV='test' node ./scripts/resetDb.js",
         "recreate:productionDatabase": "NODE_ENV='production' node ./scripts/resetDb.js",
+        "recreate:localDatabase": "node ./scripts/resetDb.js",
         "report-coveralls": "c8 report --reporter=text-lcov | coveralls"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@types/node": "^16.11.1",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "mongodb": "^4.1.2",
-        "morgan": "^1.10.0"
+        "morgan": "^1.10.0",
+        "socket.io": "^4.3.1"
     },
     "devDependencies": {
         "c8": "^7.9.0",
@@ -31,5 +34,9 @@
         "mocha": "^9.1.2",
         "nodemon": "^2.0.12"
     },
-    "type": "module"
+    "type": "module",
+    "optionalDependencies": {
+        "bufferutil": "^4.0.5",
+        "utf-8-validate": "^5.0.7"
+    }
 }

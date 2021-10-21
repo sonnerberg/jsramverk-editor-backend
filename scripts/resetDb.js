@@ -70,9 +70,12 @@ const database = {
 }
 
 if (NODE_ENV == 'test') {
+    console.log('recreating test database')
     database.recreateTestDB()
-}
-
-if (NODE_ENV == 'production') {
+} else if (NODE_ENV == 'production') {
+    console.log('recreating production database')
+    database.recreateDB()
+} else {
+    console.log('recreating local database')
     database.recreateDB()
 }

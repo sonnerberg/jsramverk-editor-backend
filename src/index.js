@@ -5,6 +5,9 @@ import apiRouter from './routes/api.js'
 // import handle404 from './handle404.js'
 // import errorHandler from './errorHandler.js'
 import path from 'path'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
+import database from './db/database.js'
 
 const __dirname = path.resolve()
 const rootRouter = express.Router()
@@ -12,6 +15,53 @@ const rootRouter = express.Router()
 const PORT = process.env.PORT || 1337
 
 const app = express()
+
+const httpServer = createServer(app)
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+    },
+})
+
+io.sockets.on('connection', (socket) => {
+    socket.on('join', ({ room }) => {
+        console.log(`joining room: ${room} from ${socket.id}`)
+        socket.join(room)
+    })
+
+    socket.on('leave', ({ room }) => {
+        console.log(`leaving room: ${room} from ${socket.id}`)
+        socket.leave(room)
+    })
+
+    socket.on('newDocument', () => {
+        console.log('new document created')
+        socket.broadcast.emit('newDocument')
+    })
+
+    let previousData
+
+    socket.on('doc', async (data) => {
+        if (JSON.stringify(previousData) !== JSON.stringify(data)) {
+            console.log(`sending data to room: ${data.id} from ${socket.id}`)
+            if (data.id) {
+                socket.to(data.id).emit('doc', data)
+                try {
+                    await database.updateDocument(
+                        data.id,
+                        data.editorText,
+                        data.name
+                    )
+                } catch (error) {
+                    console.error(error.message)
+                }
+            }
+        }
+        previousData = data
+    })
+})
 
 // don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
@@ -37,6 +87,6 @@ app.use(rootRouter)
 // app.use(handle404)
 // app.use(errorHandler)
 
-export const server = app.listen(PORT, () => {
+export const server = httpServer.listen(PORT, () => {
     console.log(`server listening on ${PORT}`)
 })
