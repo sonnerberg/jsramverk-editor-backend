@@ -22,9 +22,13 @@ const io = new Server(httpServer, {
     cors: {
         origin:
             process.env.NODE_ENV === 'production'
-                ? ['www.student.bth.se', 'https://jsramverk-editor-pene14.azurewebsites.net/']
+                ? [
+                      'www.student.bth.se',
+                      'https://jsramverk-editor-pene14.azurewebsites.net/',
+                  ]
                 : 'http://localhost:3000',
         methods: ['GET', 'POST'],
+        allowedHeaders: ['Access-Control-Allow-Origin'],
     },
 })
 
