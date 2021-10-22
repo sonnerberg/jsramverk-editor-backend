@@ -36,9 +36,9 @@ io.sockets.on('connection', (socket) => {
         socket.leave(room)
     })
 
-    socket.on('newDocument', () => {
+    socket.on('newDocument', ({ id }) => {
         console.log('new document created')
-        socket.broadcast.emit('newDocument')
+        socket.broadcast.emit('newDocument', { id })
     })
 
     let previousData
