@@ -18,6 +18,21 @@ const app = express()
 
 const httpServer = createServer(app)
 
+// don't show the log when it is test
+if (process.env.NODE_ENV !== 'test') {
+    // use morgan to log at command line
+    app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
+}
+
+app.use(cors())
+app.use(express.json())
+
+app.use('/api/v1', apiRouter)
+
+const buildPath = path.normalize(path.join(__dirname, 'public', 'build'))
+
+app.use(express.static(buildPath))
+
 const io = new Server(httpServer, {
     cors: {
         origin:
@@ -69,21 +84,6 @@ io.sockets.on('connection', (socket) => {
         previousData = data
     })
 })
-
-// don't show the log when it is test
-if (process.env.NODE_ENV !== 'test') {
-    // use morgan to log at command line
-    app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
-}
-
-app.use(cors())
-app.use(express.json())
-
-app.use('/api/v1', apiRouter)
-
-const buildPath = path.normalize(path.join(__dirname, 'public', 'build'))
-
-app.use(express.static(buildPath))
 
 rootRouter.get('(/*)?', async (_req, res, _next) => {
     res.sendFile(path.join(buildPath, 'index.html'))
