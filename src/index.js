@@ -47,7 +47,7 @@ const corsConfig = {
         origin:
             process.env.NODE_ENV === 'production'
                 ? // [
-                  'http://www.student.bth.se'
+                  'https://www.student.bth.se'
                 : //   'https://jsramverk-editor-pene14.azurewebsites.net/',
                   //   ]
                   'http://localhost:3000',
@@ -57,8 +57,6 @@ const corsConfig = {
 }
 
 const io = new Server(httpServer, corsConfig)
-
-console.log('This is the cors config:', corsConfig)
 
 io.sockets.on('connection', (socket) => {
     socket.on('join', ({ room }) => {
