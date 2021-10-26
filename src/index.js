@@ -16,8 +16,6 @@ const PORT = process.env.PORT || 1337
 
 const app = express()
 
-const httpServer = createServer(app)
-
 // don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
     // use morgan to log at command line
@@ -33,7 +31,18 @@ const buildPath = path.normalize(path.join(__dirname, 'public', 'build'))
 
 app.use(express.static(buildPath))
 
-const io = new Server(httpServer, {
+rootRouter.get('(/*)?', async (_req, res, _next) => {
+    res.sendFile(path.join(buildPath, 'index.html'))
+})
+
+app.use(rootRouter)
+
+// app.use(handle404)
+// app.use(errorHandler)
+
+const httpServer = createServer(app)
+
+const corsConfig = {
     cors: {
         origin:
             process.env.NODE_ENV === 'production'
@@ -45,7 +54,11 @@ const io = new Server(httpServer, {
         methods: ['GET', 'POST'],
         // allowedHeaders: ['Access-Control-Allow-Origin'],
     },
-})
+}
+
+const io = new Server(httpServer, corsConfig)
+
+console.log('This is the cors config:', corsConfig)
 
 io.sockets.on('connection', (socket) => {
     socket.on('join', ({ room }) => {
@@ -84,15 +97,6 @@ io.sockets.on('connection', (socket) => {
         previousData = data
     })
 })
-
-rootRouter.get('(/*)?', async (_req, res, _next) => {
-    res.sendFile(path.join(buildPath, 'index.html'))
-})
-
-app.use(rootRouter)
-
-// app.use(handle404)
-// app.use(errorHandler)
 
 export const server = httpServer.listen(PORT, () => {
     console.log(`server listening on ${PORT}`)
