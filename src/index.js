@@ -46,13 +46,9 @@ const corsConfig = {
     cors: {
         origin:
             process.env.NODE_ENV === 'production'
-                ? // [
-                  'https://www.student.bth.se'
-                : //   'https://jsramverk-editor-pene14.azurewebsites.net/',
-                  //   ]
-                  'http://localhost:3000',
+                ? 'http://www.student.bth.se'
+                : 'http://localhost:3000',
         methods: ['GET', 'POST'],
-        // allowedHeaders: ['Access-Control-Allow-Origin'],
     },
 }
 
