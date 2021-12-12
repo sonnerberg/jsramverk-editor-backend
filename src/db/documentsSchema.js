@@ -1,4 +1,4 @@
-export const schema = {
+export const documentsSchema = {
     validator: {
         $jsonSchema: {
             bsonType: 'object',

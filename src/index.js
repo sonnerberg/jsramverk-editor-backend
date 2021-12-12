@@ -1,53 +1,78 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-import apiRouter from './routes/api.js'
-// import handle404 from './handle404.js'
-// import errorHandler from './errorHandler.js'
-import path from 'path'
+// import path from 'path'
+import expressSession from 'express-session'
+
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { ensureLoggedIn } from 'connect-ensure-login'
+
+import handle404 from './handle404.js'
+import errorHandler from './errorHandler.js'
 import database from './db/database.js'
+import passport from './passport.js'
+import { authRouter } from './routes/authRouter.js'
+import { apiRouter } from './routes/apiRouter.js'
+import { getFrontendURL } from './getFrontendURL.js'
+import { usersRouter } from './routes/usersRouter.js'
 
-const __dirname = path.resolve()
-const rootRouter = express.Router()
+const { NODE_ENV, SESSION_SECRET } = process.env
+let { PORT } = process.env
 
-const PORT = process.env.PORT || 1337
+// const __dirname = path.resolve()
+// const rootRouter = express.Router()
+
+PORT = PORT || 1337
 
 const app = express()
 
 // don't show the log when it is test
-if (process.env.NODE_ENV !== 'test') {
+if (NODE_ENV !== 'test') {
     // use morgan to log at command line
     app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
 }
 
-app.use(cors())
+app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
 
-app.use('/api/v1', apiRouter)
+app.use(
+    expressSession({
+        secret: SESSION_SECRET,
+        resave: true,
+        saveUninitialized: true,
+    })
+)
 
-const buildPath = path.normalize(path.join(__dirname, 'public', 'build'))
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+app.use(passport.initialize())
+app.use(passport.session())
 
-app.use(express.static(buildPath))
+// app.use('/api/v1', apiRouter)
+app.use('/api/v1', ensureLoggedIn(), apiRouter)
 
-rootRouter.get('(/*)?', async (_req, res, _next) => {
-    res.sendFile(path.join(buildPath, 'index.html'))
-})
+app.use('/auth/v1', authRouter)
+app.use('/users/v1', usersRouter)
 
-app.use(rootRouter)
+// const buildPath = path.normalize(path.join(__dirname, 'public', 'build'))
 
-// app.use(handle404)
-// app.use(errorHandler)
+// app.use(express.static(buildPath))
+
+// rootRouter.get('(/*)?', async (_req, res, _next) => {
+//     res.sendFile(path.join(buildPath, 'index.html'))
+// })
+
+// app.use(rootRouter)
+
+app.use(handle404)
+app.use(errorHandler)
 
 const httpServer = createServer(app)
 
 const corsConfig = {
     cors: {
-        origin:
-            process.env.NODE_ENV === 'production'
-                ? 'http://www.student.bth.se'
-                : 'http://localhost:3000',
+        origin: getFrontendURL(),
         methods: ['GET', 'POST'],
     },
 }
@@ -78,11 +103,11 @@ io.sockets.on('connection', (socket) => {
             if (data.id) {
                 socket.to(data.id).emit('doc', data)
                 try {
-                    await database.updateDocument(
-                        data.id,
-                        data.editorText,
-                        data.name
-                    )
+                    await database.documents.updateDocument({
+                        id: data.id,
+                        html: data.editorText,
+                        name: data.name,
+                    })
                 } catch (error) {
                     console.error(error.message)
                 }

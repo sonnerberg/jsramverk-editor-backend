@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb'
-import { schema } from '../src/db/schema.js'
+import { usersSchema } from '../src/db/usersSchema.js'
 dotenv.config()
 
 const {
@@ -9,7 +9,7 @@ const {
     DB_CLUSTER_ADDRESS,
     DB_NAME_TEST,
     DB_NAME,
-    DB_COLLECTION,
+    DB_USERS_COLLECTION,
     NODE_ENV,
 } = process.env
 
@@ -39,11 +39,16 @@ const database = {
 
         try {
             const db = client.db(DB_NAME)
-            db.collection(DB_COLLECTION).drop((err, result) => {
+            db.collection(DB_USERS_COLLECTION).drop((err, result) => {
                 if (err) throw err
                 if (result) console.log(`Collection successfully dropped`)
             })
-            await db.createCollection(DB_COLLECTION, schema)
+            await db.createCollection(DB_USERS_COLLECTION, usersSchema)
+            await db.createIndex(
+                DB_USERS_COLLECTION,
+                { email: 1 },
+                { unique: true }
+            )
         } finally {
             // Ensures that the client will close when you finish/error
             await client.close()
@@ -57,11 +62,16 @@ const database = {
 
         try {
             const db = client.db(DB_NAME_TEST)
-            db.collection(DB_COLLECTION).drop((err, result) => {
+            db.collection(DB_USERS_COLLECTION).drop((err, result) => {
                 if (err) throw err
                 if (result) console.log(`Collection successfully dropped`)
             })
-            await db.createCollection(DB_COLLECTION, schema)
+            await db.createCollection(DB_USERS_COLLECTION, usersSchema)
+            await db.createIndex(
+                DB_USERS_COLLECTION,
+                { username: 1 },
+                { unique: true }
+            )
         } finally {
             // Ensures that the client will close when you finish/error
             await client.close()
