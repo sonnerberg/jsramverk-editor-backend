@@ -71,7 +71,7 @@ const database = {
                     await collection.findOne(queryUserWhoIsLoggedIn, { _id: 1 })
 
                 if (
-                    userWhoIsLoggedInAndOwnerOfDocument._id ===
+                    userWhoShouldBeAbleToEdit._id ===
                     userWhoIsLoggedInAndOwnerOfDocument._id
                 ) {
                     throw new Error(
