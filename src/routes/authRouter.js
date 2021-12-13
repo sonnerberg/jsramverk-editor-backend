@@ -14,7 +14,7 @@ authRouter
         }),
         function (_req, res) {
             // Successful authentication, redirect home.
-            res.redirect(`${getFrontendURL()}/editor`)
+            res.redirect(`${getFrontendURL()}/~pene14/editor`)
         }
     )
     .get(
