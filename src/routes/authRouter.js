@@ -1,6 +1,7 @@
 import express from 'express'
 import passport from 'passport'
 import { ensureLoggedIn } from 'connect-ensure-login'
+import { getFrontendURL } from '../getFrontendURL.js'
 
 export const authRouter = express.Router()
 
@@ -13,17 +14,21 @@ authRouter
         }),
         function (_req, res) {
             // Successful authentication, redirect home.
-            res.redirect('http://localhost:3000/editor')
+            res.redirect(`${getFrontendURL()}/editor`)
         }
     )
     .get(
         '/user',
         // ensureLoggedIn('/auth/v1/github'),
         (req, res) => {
-            res.json({ data: req.user })
+            return res.json({ data: req.user })
         }
     )
     .get('/logout', (req, res) => {
+        console.log(
+            'the user is logging out and is being redirected to:',
+            `${getFrontendURL()}/~pene14/editor`
+        )
         req.logout()
-        res.redirect('http://localhost:3000')
+        res.redirect(`${getFrontendURL()}/~pene14/editor`)
     })
