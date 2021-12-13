@@ -1,7 +1,7 @@
 const { NODE_ENV } = process.env
 
-export function getFrontendURL() {
+export function getCorsURL() {
     return NODE_ENV === 'production'
-        ? 'https://www.student.bth.se/~pene14/editor/'
+        ? 'https://www.student.bth.se'
         : 'http://localhost:3000'
 }

@@ -14,8 +14,8 @@ import database from './db/database.js'
 import passport from './passport.js'
 import { authRouter } from './routes/authRouter.js'
 import { apiRouter } from './routes/apiRouter.js'
-import { getFrontendURL } from './getFrontendURL.js'
 import { usersRouter } from './routes/usersRouter.js'
+import { getCorsURL } from './getCorsURL.js'
 
 const { NODE_ENV, SESSION_SECRET } = process.env
 let { PORT } = process.env
@@ -72,7 +72,7 @@ const httpServer = createServer(app)
 
 const corsConfig = {
     cors: {
-        origin: getFrontendURL(),
+        origin: getCorsURL(),
         methods: ['GET', 'POST'],
     },
 }
