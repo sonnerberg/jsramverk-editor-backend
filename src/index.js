@@ -16,6 +16,15 @@ import { authRouter } from './routes/authRouter.js'
 import { apiRouter } from './routes/apiRouter.js'
 import { usersRouter } from './routes/usersRouter.js'
 import { getCorsURL } from './getCorsURL.js'
+import { graphqlHTTP } from 'express-graphql'
+import {
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLString,
+    buildSchema,
+    GraphQLList,
+    GraphQLNonNull,
+} from 'graphql'
 
 const { NODE_ENV, SESSION_SECRET } = process.env
 let { PORT } = process.env
@@ -32,6 +41,43 @@ if (NODE_ENV !== 'test') {
     // use morgan to log at command line
     app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
 }
+
+const UserType = new GraphQLObjectType({
+    name: 'User',
+    description: 'This represents a registered user',
+    fields: () => ({
+        _id: { type: GraphQLNonNull(GraphQLString) },
+        email: { type: GraphQLNonNull(GraphQLString) },
+    }),
+})
+
+const RootQueryType = new GraphQLObjectType({
+    name: 'Query',
+    description: 'Root Query',
+    fields: () => ({
+        user: {
+            type: UserType,
+            description: 'A single user',
+            args: { email: { type: GraphQLNonNull(GraphQLString) } },
+            resolve: async (_parent, args) => {
+                const users = await database.users.getAllUsers({ email: null })
+                return users.find((user) => user.email === args.email)
+            },
+        },
+        users: {
+            type: new GraphQLList(UserType),
+            description: 'List of all users',
+            resolve: async (_parent, _args, context) =>
+                await database.users.getAllUsers({
+                    email: context.user?.email ? context.user.email : null,
+                }),
+        },
+    }),
+})
+
+const schema = new GraphQLSchema({
+    query: RootQueryType,
+})
 
 app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
@@ -50,6 +96,13 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 // app.use('/api/v1', apiRouter)
+app.use(
+    '/graphql',
+    graphqlHTTP({
+        schema,
+        graphiql: true,
+    })
+)
 app.use('/api/v1', ensureLoggedIn(), apiRouter)
 
 app.use('/auth/v1', authRouter)
