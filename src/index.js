@@ -21,10 +21,11 @@ import {
     GraphQLSchema,
     GraphQLObjectType,
     GraphQLString,
-    buildSchema,
     GraphQLList,
     GraphQLNonNull,
 } from 'graphql'
+import { getFrontendURL } from './getFrontendURL.js'
+import { ObjectId } from 'mongodb'
 
 const { NODE_ENV, SESSION_SECRET } = process.env
 let { PORT } = process.env
@@ -42,12 +43,136 @@ if (NODE_ENV !== 'test') {
     app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
 }
 
+const DocumentType = new GraphQLObjectType({
+    name: 'Document',
+    description: 'This represents a document',
+    fields: () => ({
+        _id: { type: GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLNonNull(GraphQLString) },
+        text: { type: GraphQLNonNull(GraphQLString) },
+        allowedUsers: { type: GraphQLList(GraphQLString) },
+    }),
+})
+
 const UserType = new GraphQLObjectType({
     name: 'User',
     description: 'This represents a registered user',
     fields: () => ({
         _id: { type: GraphQLNonNull(GraphQLString) },
         email: { type: GraphQLNonNull(GraphQLString) },
+    }),
+})
+
+const LogoutType = new GraphQLObjectType({
+    name: 'Logout',
+    description: 'This represents a logout',
+    fields: () => ({
+        redirect: { type: GraphQLNonNull(GraphQLString) },
+    }),
+})
+
+const RegisterType = new GraphQLObjectType({
+    name: 'Register',
+    description: 'This represents a registered user',
+    fields: () => ({
+        id: { type: GraphQLNonNull(GraphQLString) },
+        message: { type: GraphQLNonNull(GraphQLString) },
+    }),
+})
+
+const RootMutationType = new GraphQLObjectType({
+    name: 'Mutation',
+    description: 'Root Mutation',
+    fields: () => ({
+        allowEdit: {
+            type: DocumentType,
+            description: 'Create a document',
+            args: {
+                documentToEditId: { type: GraphQLNonNull(GraphQLString) },
+                userWhoShouldEditId: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve: async (
+                _parent,
+                { documentToEditId, userWhoShouldEditId },
+                {
+                    req: {
+                        user: { email: emailOfLoggedInUser },
+                    },
+                }
+            ) =>
+                await database.users.allowUserToEditDocument({
+                    emailOfLoggedInUser,
+                    documentToEditId,
+                    userWhoShouldEditId,
+                }),
+        },
+        updateDocument: {
+            type: DocumentType,
+            description: 'Create a document',
+            args: {
+                html: { type: GraphQLNonNull(GraphQLString) },
+                name: { type: GraphQLNonNull(GraphQLString) },
+                id: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve: async (
+                _parent,
+                { name, html, id },
+                {
+                    req: {
+                        user: { email },
+                    },
+                }
+            ) =>
+                await database.documents.updateDocument({
+                    id,
+                    html,
+                    name,
+                    email,
+                }),
+        },
+        createDocument: {
+            type: DocumentType,
+            description: 'Create a document',
+            args: {
+                html: { type: GraphQLNonNull(GraphQLString) },
+                name: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve: async (
+                _parent,
+                { name, html },
+                {
+                    req: {
+                        user: { email },
+                    },
+                }
+            ) => await database.documents.insertHTML(name, html, email),
+        },
+        registerUser: {
+            type: RegisterType,
+            description: 'Register a user',
+            args: {
+                email: { type: GraphQLNonNull(GraphQLString) },
+                password: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve: async (_parent, { email, password }, context) => {
+                const { id, message } = await database.users.registerUser({
+                    email,
+                    password,
+                })
+                context.req.logIn({ email }, (err) => {
+                    if (err) throw err
+                })
+                return { id, message }
+            },
+        },
+        logout: {
+            type: LogoutType,
+            description: 'Log out a user',
+            resolve: (_parent, _args, context) => {
+                context.req.logout()
+                return { redirect: getFrontendURL() }
+            },
+        },
     }),
 })
 
@@ -58,10 +183,8 @@ const RootQueryType = new GraphQLObjectType({
         user: {
             type: UserType,
             description: 'A single user',
-            args: { email: { type: GraphQLNonNull(GraphQLString) } },
-            resolve: async (_parent, args) => {
-                const users = await database.users.getAllUsers({ email: null })
-                return users.find((user) => user.email === args.email)
+            resolve: (_parent, _args, { req: { user } }) => {
+                return user
             },
         },
         users: {
@@ -69,7 +192,43 @@ const RootQueryType = new GraphQLObjectType({
             description: 'List of all users',
             resolve: async (_parent, _args, context) =>
                 await database.users.getAllUsers({
-                    email: context.user?.email ? context.user.email : null,
+                    email: context.req.user?.email
+                        ? context.req.user.email
+                        : null,
+                }),
+        },
+        document: {
+            type: DocumentType,
+            description: 'A single document',
+            args: { id: { type: GraphQLNonNull(GraphQLString) } },
+            resolve: async (
+                _parent,
+                { id },
+                {
+                    req: {
+                        user: { email },
+                    },
+                }
+            ) =>
+                await database.documents.getOneDocument({
+                    id,
+                    email,
+                }),
+        },
+        documents: {
+            type: new GraphQLList(DocumentType),
+            description: 'List of all documents',
+            resolve: async (
+                _parent,
+                _args,
+                {
+                    req: {
+                        user: { email },
+                    },
+                }
+            ) =>
+                await database.documents.getAllHTMLDocuments({
+                    email,
                 }),
         },
     }),
@@ -77,6 +236,7 @@ const RootQueryType = new GraphQLObjectType({
 
 const schema = new GraphQLSchema({
     query: RootQueryType,
+    mutation: RootMutationType,
 })
 
 app.use(cors({ origin: true, credentials: true }))
@@ -98,10 +258,13 @@ app.use(passport.session())
 // app.use('/api/v1', apiRouter)
 app.use(
     '/graphql',
-    graphqlHTTP({
+    graphqlHTTP((req, res) => ({
         schema,
         graphiql: true,
-    })
+        context: {
+            req,
+        },
+    }))
 )
 app.use('/api/v1', ensureLoggedIn(), apiRouter)
 
@@ -162,6 +325,7 @@ io.sockets.on('connection', (socket) => {
                         name: data.name,
                     })
                 } catch (error) {
+                    console.log('there is an error')
                     console.error(error.message)
                 }
             }

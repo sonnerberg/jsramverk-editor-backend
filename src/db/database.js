@@ -92,7 +92,12 @@ const database = {
                 }
                 const options = {
                     returnDocument: 'after',
-                    projection: { 'docs.allowedUsers': 1 },
+                    projection: {
+                        'docs.allowedUsers': 1,
+                        'docs._id': 1,
+                        'docs.name': 1,
+                        'docs.text': 1,
+                    },
                 }
 
                 const doc = await collection.findOneAndUpdate(
@@ -105,7 +110,13 @@ const database = {
                 if (!doc.lastErrorObject.updatedExisting)
                     throw new Error('Document not found')
 
-                return doc
+                const updatedDocument = doc.value.docs.find(
+                    (doc) =>
+                        JSON.stringify(doc._id) ===
+                        JSON.stringify(ObjectId(documentToEditId))
+                )
+
+                return updatedDocument
             } finally {
                 // Ensures that the client will close when you finish/error
                 await client.close()
@@ -239,9 +250,10 @@ const database = {
                             name: '$docs.name',
                             text: '$docs.text',
                             _id: '$docs._id',
+                            allowedUsers: '$docs.allowedUsers',
                         },
                     },
-                    { $project: { name: 1, text: 1, _id: 1 } },
+                    { $project: { name: 1, text: 1, _id: 1, allowedUsers: 1 } },
                 ]
 
                 const returnedDocuments = await collection
@@ -290,8 +302,10 @@ const database = {
                     doc.value.docs[doc.value.docs.length - 1]
 
                 return {
-                    message: `Successfully inserted document`,
-                    insertedDocument,
+                    // message: `Successfully inserted document`,
+                    _id: insertedDocument._id,
+                    name: insertedDocument.name,
+                    text: insertedDocument.text,
                 }
             } finally {
                 // Ensures that the client will close when you finish/error
@@ -411,7 +425,11 @@ const database = {
                     options
                 )
 
-                return doc.value.docs[0]
+                return doc.value.docs.find(
+                    (doc) =>
+                        JSON.stringify(doc._id) ===
+                        JSON.stringify(ObjectId(documentId))
+                )
             } finally {
                 // Ensures that the client will close when you finish/error
                 await client.close()
